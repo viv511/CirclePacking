@@ -60,26 +60,59 @@ let canvasWidth = 500;
 let canvasHeight = 500;
 
 function setup() {
-  createCanvas(canvasWidth, canvasHeight);
-  let button = createButton('click me');
-  button.position(canvasHeight, canvasWidth);
+  let startButton = createButton('Generate Circles');
+  let resetButton = createButton('Reset');
 
-  // Call repaint() when the button is pressed.
-  button.mousePressed(startProject);
+  startButton.mousePressed(startProject);
+  resetButton.mousePressed(resetCircles);
+  
+  createCanvas(canvasWidth, canvasHeight);
+
+  colorMode(HSB, 360, 100, 100, 100);
+  ellipseMode(CENTER);
+
+
+  // let x = (windowWidth - width) / 2;
+  // let y = (windowHeight - height) / 2;
+  // cnv.position(x, y);
 }
 
 function startProject() {
+  resetCircles();
   startDrawing = true;
   generatingCircle = false;
-  circles = [];
-  
-  //Initial Circle (if you want from the middle)
-  // circles.push(new Circle(canvasWidth/2, canvasHeight/2, 1));
+}
+
+function resetCircles() {
+  circles = []
 }
 
 function draw() {
   background(0);
   frameRate(120);
+
+  // Gradient Code ~ https://www.youtube.com/watch?v=-MUOweQ6wac
+  let angle = map(frameCount % 360, 0, 360, 0, TWO_PI) * 2; //Speed up by 2
+  let centerX = canvasWidth / 2;
+  let centerY = canvasHeight / 2;
+  let lineLength = 250;
+
+  let gStartX = centerX + cos(angle) * lineLength;
+  let gStartY = centerY + sin(angle) * lineLength;
+
+  let gEndX = centerX + cos(angle + PI) * lineLength;
+  let gEndY = centerY + sin(angle + PI) * lineLength;
+
+  // strokeWeight(10);
+  // line(gStartX, gStartY, gEndX, gEndY);
+  let gradient = drawingContext.createLinearGradient(
+    gStartX, gStartY, gEndX, gEndY
+  );
+  gradient.addColorStop(0, color(310, 100, 100, 100));
+  gradient.addColorStop(1, color(250, 100, 100, 100));
+  drawingContext.strokeStyle = gradient;
+
+
 
   if(startDrawing) {
     if(!generatingCircle) {
@@ -89,6 +122,11 @@ function draw() {
     for (let i = 0; i < circles.length; i++) {
       circles[i].show();
       circles[i].changeSize();
+    }
+  }
+  else {
+    if(mouseIsPressed) {
+      circles.push(new Circle(mouseX, mouseY, 1));
     }
   }
 
@@ -109,8 +147,7 @@ function drawCircle() {
     }
   }
   
-  //
-
+  
   if(validity)  {
     let c = new Circle(x, y, 1);
     circles.push(c);
