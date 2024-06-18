@@ -56,8 +56,18 @@ class Circle {
 }
 
 var circles = []
-let canvasWidth = 500;
-let canvasHeight = 500;
+
+//500, 500 
+let canvasWidth = 1920/5;
+let canvasHeight = 1080/5;
+
+let img;
+var xCoords = []
+var yCoords = []
+
+function preload() {
+  img = loadImage("data/badAppleSmall.jpg")
+}
 
 function setup() {
   let startButton = createButton('Generate Circles');
@@ -67,14 +77,36 @@ function setup() {
   resetButton.mousePressed(resetCircles);
   
   createCanvas(canvasWidth, canvasHeight);
+    
+  // let d = pixelDensity();
+  // // for (let y = 0; y < canvasHeight; y++) {
+  // //   for (let x = 0; x < canvasWidth; x++) {
+      
+  // //     let p5Color = get(x, y)
+
+  // //     // console.log(p5Color)
+    
+  // //   }
+  // // }
+  // console.log(d)
+  img.loadPixels();
+  console.log(img.pixels.length)
+  for (let i=0; i<img.pixels.length; i+=4) {
+    let val = (img.pixels[i]+img.pixels[i+1]+img.pixels[i+2]) / 3;
+    if(val < 10) {
+      //BLACK!
+      xCoords.push((i/4) % canvasWidth)
+      yCoords.push(floor((i/4) / canvasHeight))
+    }
+  }
+
+  updatePixels();
+
 
   colorMode(HSB, 360, 100, 100, 100);
   ellipseMode(CENTER);
 
-
-  // let x = (windowWidth - width) / 2;
-  // let y = (windowHeight - height) / 2;
-  // cnv.position(x, y);
+  console.log(xCoords.length)
 }
 
 function startProject() {
@@ -90,6 +122,10 @@ function resetCircles() {
 function draw() {
   background(0);
   frameRate(120);
+
+  stroke(255)
+  noFill()
+  strokeWeight(3)
 
   // Gradient Code ~ https://www.youtube.com/watch?v=-MUOweQ6wac
   let angle = map(frameCount % 360, 0, 360, 0, TWO_PI) * 2; //Speed up by 2
@@ -112,8 +148,6 @@ function draw() {
   gradient.addColorStop(1, color(250, 100, 100, 100));
   drawingContext.strokeStyle = gradient;
 
-
-
   if(startDrawing) {
     if(!generatingCircle) {
       drawCircle();
@@ -133,8 +167,11 @@ function draw() {
 }
 
 function drawCircle() {
-  let x = random(width);
-  let y = random(height);
+  let index = floor(random(xCoords.length));
+  let x = xCoords[index];
+  let y = yCoords[index];
+  // let x = random(width)
+  // let y = random(height)
   
   let validity = true;
 
