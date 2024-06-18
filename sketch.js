@@ -24,7 +24,7 @@ class Circle {
     if(!this.collision()) {
       if(!this.touchingOtherCircle()) {
         if(!this.touchingWhite()) {
-          this.r += 4;
+          this.r += 2;
           generatingCircle = true;
         }
         else {
@@ -41,19 +41,11 @@ class Circle {
   }
 
   touchingWhite() {
-    if(isBadApple) {
-
-      if(findCoordinate(this.x+this.r, this.y)) {
-        return true;
-      }
-      if(findCoordinate(this.x-this.r, this.y)) {
-        return true;
-      }
-      if(findCoordinate(this.x, this.y+this.r)) {
-        return true;
-      }
-      if(findCoordinate(this.x, this.y-this.r)) {
-        return true;
+    if(isBadApple) { //Jank but lol
+      for(let angle = 0; angle < TWO_PI; angle += PI/8) {
+        if(findCoordinate(floor(this.x + this.r * cos(angle)), floor(this.y + this.r * sin(angle)))) {
+          return true;
+        }
       }
 
       return false
@@ -89,8 +81,8 @@ class Circle {
 var circles = []
 
 //500, 500 
-let canvasWidth = 1920;
-let canvasHeight = 1080;
+let canvasWidth = 600;
+let canvasHeight = 450;
 
 let img;
 var xCoords = []
@@ -107,7 +99,7 @@ function findCoordinate(x, y) {
 }
 
 function preload() {
-  img = loadImage("data/badApple.jpg")
+  img = loadImage("data/videoFrames/set2/ezgif-frame-121.jpg")
 }
 
 function setup() {
@@ -141,7 +133,6 @@ function setup() {
   }
 
   updatePixels();
-
 
   colorMode(HSB, 360, 100, 100, 100);
   ellipseMode(CENTER);
@@ -183,30 +174,31 @@ function draw() {
   let gEndX = centerX + cos(angle + PI) * lineLength;
   let gEndY = centerY + sin(angle + PI) * lineLength;
 
-  // strokeWeight(10);
-  // line(gStartX, gStartY, gEndX, gEndY);
   let gradient = drawingContext.createLinearGradient(
     gStartX, gStartY, gEndX, gEndY
   );
+
+  
   gradient.addColorStop(0, color(310, 100, 100, 100));
   gradient.addColorStop(1, color(250, 100, 100, 100));
+  // drawingContext.fillStyle = gradient;
   drawingContext.strokeStyle = gradient;
 
-  if(startDrawing) {
-    if(!generatingCircle) {
-      drawCircle();
-    }
-
-    for (let i = 0; i < circles.length; i++) {
-      circles[i].show();
-      circles[i].changeSize();
-    }
+  var doneIndex;
+  if(!generatingCircle) {
+    doneIndex = drawCircle();
   }
   else {
-    if(mouseIsPressed) {
-      circles.push(new Circle(mouseX, mouseY, 1));
-    }
+    xCoords.splice(doneIndex, 1)
+    yCoords.splice(doneIndex, 1)
   }
+
+  for (let i = 0; i < circles.length; i++) {
+    circles[i].show();
+    circles[i].changeSize();
+  }
+  
+ 
 
 }
 
@@ -214,8 +206,6 @@ function drawCircle() {
   let index = floor(random(xCoords.length));
   let x = xCoords[index];
   let y = yCoords[index];
-  // let x = random(width)
-  // let y = random(height)
   
   let validity = true;
 
@@ -233,4 +223,6 @@ function drawCircle() {
     let c = new Circle(x, y, 1);
     circles.push(c);
   }
+
+  return index;
 }
