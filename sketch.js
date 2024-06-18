@@ -1,5 +1,10 @@
+//Credit to TheCodingTrain for initial inspiration: https://www.youtube.com/watch?v=QHEQuoIKgNE
+
 var startDrawing = false;
 var generatingCircle = false;
+
+//Change if you want to do image detection or not
+var isBadApple = true;
 
 class Circle {
   constructor(x, y, r) {
@@ -18,8 +23,13 @@ class Circle {
   changeSize() {
     if(!this.collision()) {
       if(!this.touchingOtherCircle()) {
-        this.r += 1;
-        generatingCircle = true;
+        if(!this.touchingWhite()) {
+          this.r += 4;
+          generatingCircle = true;
+        }
+        else {
+          generatingCircle = false;
+        }
       }
       else {
         generatingCircle = false;
@@ -27,6 +37,27 @@ class Circle {
     }
     else {
       generatingCircle = false;
+    }
+  }
+
+  touchingWhite() {
+    if(isBadApple) {
+
+      if(findCoordinate(this.x+this.r, this.y)) {
+        return true;
+      }
+      if(findCoordinate(this.x-this.r, this.y)) {
+        return true;
+      }
+      if(findCoordinate(this.x, this.y+this.r)) {
+        return true;
+      }
+      if(findCoordinate(this.x, this.y-this.r)) {
+        return true;
+      }
+
+      return false
+
     }
   }
 
@@ -58,15 +89,25 @@ class Circle {
 var circles = []
 
 //500, 500 
-let canvasWidth = 1920/5;
-let canvasHeight = 1080/5;
+let canvasWidth = 1920;
+let canvasHeight = 1080;
 
 let img;
 var xCoords = []
 var yCoords = []
 
+function findCoordinate(x, y) {
+  for(var i=0; i<xCoords.length; i++) {
+    if(x == xCoords[i] && y == yCoords[i]) {
+      return false; //If black
+    }
+  }
+
+  return true //If white
+}
+
 function preload() {
-  img = loadImage("data/badAppleSmall.jpg")
+  img = loadImage("data/badApple.jpg")
 }
 
 function setup() {
@@ -78,25 +119,24 @@ function setup() {
   
   createCanvas(canvasWidth, canvasHeight);
     
-  // let d = pixelDensity();
-  // // for (let y = 0; y < canvasHeight; y++) {
-  // //   for (let x = 0; x < canvasWidth; x++) {
-      
-  // //     let p5Color = get(x, y)
-
-  // //     // console.log(p5Color)
-    
-  // //   }
-  // // }
-  // console.log(d)
   img.loadPixels();
   console.log(img.pixels.length)
+
+  let xCoordinate = 0;
+  let yCoordinate = 0;
+
   for (let i=0; i<img.pixels.length; i+=4) {
+    xCoordinate++;
+    if(xCoordinate == canvasWidth) {
+      xCoordinate = 0;
+      yCoordinate++;
+    }
+
     let val = (img.pixels[i]+img.pixels[i+1]+img.pixels[i+2]) / 3;
-    if(val < 10) {
+    if(val < 5) {
       //BLACK!
-      xCoords.push((i/4) % canvasWidth)
-      yCoords.push(floor((i/4) / canvasHeight))
+      xCoords.push(xCoordinate)
+      yCoords.push(yCoordinate)
     }
   }
 
@@ -121,11 +161,15 @@ function resetCircles() {
 
 function draw() {
   background(0);
+  // background(img);
   frameRate(120);
 
-  stroke(255)
-  noFill()
-  strokeWeight(3)
+  // for (var i=0; i<xCoords.length; i++) {
+  //   stroke(255)
+  //   noFill()
+  //   strokeWeight(3)
+  //   ellipse(xCoords[i], yCoords[i], 3, 3);
+  // }
 
   // Gradient Code ~ https://www.youtube.com/watch?v=-MUOweQ6wac
   let angle = map(frameCount % 360, 0, 360, 0, TWO_PI) * 2; //Speed up by 2
