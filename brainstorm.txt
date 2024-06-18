@@ -1,0 +1,6 @@
+https://www.youtube.com/watch?v=UkgK8eUdpAo
+
+- Split video by frames
+- Figure out how to save a p5JS canvas
+- Take frame image, run for 1 minute, save canvas, repeat until all images are done
+- Do sets of 10 frames
