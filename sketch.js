@@ -99,20 +99,24 @@ function findCoordinate(x, y) {
 }
 
 function preload() {
-  img = loadImage("data/videoFrames/set2/ezgif-frame-121.jpg")
+  img = loadImage("data/videoFrames/set1/ezgif-frame-001.jpg")
 }
 
 function setup() {
-  let startButton = createButton('Generate Circles');
-  let resetButton = createButton('Reset');
-
-  startButton.mousePressed(startProject);
-  resetButton.mousePressed(resetCircles);
-  
+  buttonHandling();
   createCanvas(canvasWidth, canvasHeight);
     
+  handleImage();
+
+  colorMode(HSB, 360, 100, 100, 100);
+  ellipseMode(CENTER);
+}
+
+function handleImage() {
+  xCoords = [];
+  yCoords = [];
+
   img.loadPixels();
-  console.log(img.pixels.length)
 
   let xCoordinate = 0;
   let yCoordinate = 0;
@@ -125,19 +129,14 @@ function setup() {
     }
 
     let val = (img.pixels[i]+img.pixels[i+1]+img.pixels[i+2]) / 3;
-    if(val < 5) {
+    if(val < 10) {
       //BLACK!
-      xCoords.push(xCoordinate)
-      yCoords.push(yCoordinate)
+      xCoords.push(xCoordinate);
+      yCoords.push(yCoordinate);
     }
   }
 
   updatePixels();
-
-  colorMode(HSB, 360, 100, 100, 100);
-  ellipseMode(CENTER);
-
-  console.log(xCoords.length)
 }
 
 function startProject() {
@@ -146,14 +145,54 @@ function startProject() {
   generatingCircle = false;
 }
 
+function buttonHandling() {
+  let startButton = createButton('Generate Circles');
+  let resetButton = createButton('Reset');
+  startButton.mousePressed(startProject);
+  resetButton.mousePressed(resetCircles);
+}
+
 function resetCircles() {
   circles = []
 }
 
+var currentFrame = 1;
+const maxGenerationTime = 0.1;
+
+//BROKEN CODE PLEASE FIX THE SET NUM AND FRAME NUM
+var setNum = 1;
+function triggerFrame(frame) {
+  if(frame > 150) {
+    frame = frame % 150;
+  }
+
+  if(frame < 10) {
+    img = loadImage("data/videoFrames/set" + setNum + "/ezgif-frame-00" + frame + ".jpg")
+  }
+  else if(frame < 100) {
+    img = loadImage("data/videoFrames/set" + setNum + "/ezgif-frame-0" + frame + ".jpg")
+  }
+  else {
+    img = loadImage("data/videoFrames/set" + setNum + "/ezgif-frame-" + frame + ".jpg")
+  }
+  
+  handleImage();
+
+  if(frame == 0) {
+    setNum++;
+  }
+  console.log(setNum, frame)
+}
+
 function draw() {
-  background(0);
-  // background(img);
-  frameRate(120);
+
+  if(frameCount > (maxGenerationTime*60*currentFrame)) {
+    currentFrame++;
+    triggerFrame(currentFrame);
+  }
+
+  background(img);
+  frameRate(60);
 
   // for (var i=0; i<xCoords.length; i++) {
   //   stroke(255)
@@ -178,7 +217,6 @@ function draw() {
     gStartX, gStartY, gEndX, gEndY
   );
 
-  
   gradient.addColorStop(0, color(310, 100, 100, 100));
   gradient.addColorStop(1, color(250, 100, 100, 100));
   // drawingContext.fillStyle = gradient;
@@ -197,9 +235,6 @@ function draw() {
     circles[i].show();
     circles[i].changeSize();
   }
-  
- 
-
 }
 
 function drawCircle() {
