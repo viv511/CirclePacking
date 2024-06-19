@@ -99,7 +99,7 @@ function findCoordinate(x, y) {
 }
 
 function preload() {
-  img = loadImage("data/videoFrames/set1/ezgif-frame-001.jpg")
+  img = loadImage("data/videoFrames/1ezgif-frame-001.jpg")
 }
 
 function setup() {
@@ -154,42 +154,52 @@ function buttonHandling() {
 
 function resetCircles() {
   circles = []
+  frameCount = 0;
+  setNum = 1;
 }
 
-var currentFrame = 1;
-const maxGenerationTime = 0.1;
+const timeToTrigger = 0.1;
 
-//BROKEN CODE PLEASE FIX THE SET NUM AND FRAME NUM
 var setNum = 1;
 function triggerFrame(frame) {
-  if(frame > 150) {
-    frame = frame % 150;
+  frame = frame - 150 * (setNum - 1)
+
+  if((frame == 47) && setNum == 8) {
+    resetCircles();
   }
 
   if(frame < 10) {
-    img = loadImage("data/videoFrames/set" + setNum + "/ezgif-frame-00" + frame + ".jpg")
+    img = loadImage("data/videoFrames/" + setNum + "ezgif-frame-00" + frame + ".jpg")
   }
   else if(frame < 100) {
-    img = loadImage("data/videoFrames/set" + setNum + "/ezgif-frame-0" + frame + ".jpg")
+    img = loadImage("data/videoFrames/" + setNum + "ezgif-frame-0" + frame + ".jpg")
   }
   else {
-    img = loadImage("data/videoFrames/set" + setNum + "/ezgif-frame-" + frame + ".jpg")
+    img = loadImage("data/videoFrames/" + setNum + "ezgif-frame-" + frame + ".jpg")
   }
   
   handleImage();
 
-  if(frame == 0) {
+  if(frame == 150) {
     setNum++;
   }
+
   console.log(setNum, frame)
 }
 
-function draw() {
+var lastFrameChangeTime = 0;
 
-  if(frameCount > (maxGenerationTime*60*currentFrame)) {
-    currentFrame++;
-    triggerFrame(currentFrame);
+function draw() {
+  if(frameCount % 2 == 0) {
+    triggerFrame(frameCount / 2);
   }
+  // // Check if enough time has passed since the last frame change
+  // if(millis() - lastFrameChangeTime > timeToTrigger * 1000) {
+  //   lastFrameChangeTime = millis();
+
+  //   currentFrame++;
+  //   triggerFrame(1 + floor(frameCount / 60) - (150 * (setNum - 1)));
+  // }
 
   background(img);
   frameRate(60);
