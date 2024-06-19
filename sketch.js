@@ -229,7 +229,7 @@ function draw() {
   // background(0);
 
 
-  if(circles.length > 100) {
+  if(circles.length > 100) { //MAKE A FUNCTION TO CALC AREA OF CIRCLES AND USE % COVERED INSTEAD
     removeIncorrectCircles();
     // circles = [];
     triggerImage();
