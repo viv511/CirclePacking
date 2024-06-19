@@ -5,7 +5,7 @@ var generatingCircle = false;
 
 //Change if you want to do image detection or not
 var isBadApple = true;
-const growthConst = 4
+const growthConst = 3
 
 class Circle {
   constructor(x, y, r) {
@@ -146,7 +146,7 @@ function generateCounts() {
   }
 }
 
-var imageNumber = 50; //SWITCH BACK TO 0
+var imageNumber = 60; //SWITCH BACK TO 0
 
 
 var xCoords = []
@@ -154,6 +154,7 @@ var yCoords = []
 
 function handleImage(img) {
   background(img);
+  
   xCoords = [];
   yCoords = [];
 
@@ -177,8 +178,10 @@ function handleImage(img) {
     }
   }
 
-  console.log(xCoords, yCoords)
-  updatePixels();
+  // console.log(xCoords, yCoords)
+  removeIncorrectCircles();
+  
+  img.updatePixels();
 }
 
 function triggerImage() {
@@ -224,15 +227,26 @@ function removeIncorrectCircles() {
 }
 
 
+var zeroTimer = 0;
 function draw() {
   frameRate(120);
   // background(0);
 
+  var circleArea = 0;
+  for (let i=0; i<circles.length; i++) {
+    circleArea += PI * pow(circles[i].r, 2);
+  }
+  var blackArea = xCoords.length
 
-  if(circles.length > 100) { //MAKE A FUNCTION TO CALC AREA OF CIRCLES AND USE % COVERED INSTEAD
-    removeIncorrectCircles();
-    // circles = [];
+  var coveredArea = (circleArea / blackArea)
+  if(coveredArea > .65){ 
+    console.log(circles.length);
     triggerImage();
+    zeroTimer = 0;
+  }
+
+  if(coveredArea == 0) {
+    zeroTimer++;
   }
 
   // setInterval(triggerImage, 2000);
