@@ -5,7 +5,7 @@ var generatingCircle = false;
 
 //Change if you want to do image detection or not
 var isBadApple = true;
-const growthConst = 3
+const growthConst = 5
 
 class Circle {
   constructor(x, y, r) {
@@ -16,9 +16,9 @@ class Circle {
   
   show() {
     stroke(255)
-    fill(0);
+    fill(255);
     strokeWeight(3)
-    circle(this.x, this.y, this.r * 2);
+    ellipse(this.x, this.y, this.r * 2, this.r * 2);
   } 
 
   changeSize() {
@@ -55,10 +55,10 @@ class Circle {
   }
 
   collision() {
-    if(this.x + this.r > width || this.x - this.r < 0) {
+    if(this.x + this.r + 5 > width || this.x - this.r - 5 < 0) {
       return true;
     }
-    if(this.y + this.r > height || this.y - this.r < 0) {
+    if(this.y + this.r + 5> height || this.y - this.r - 5< 0) {
       return true;
     }
 
@@ -70,7 +70,7 @@ class Circle {
       if(this == circles[i]) continue;
 
       let d = dist(this.x, this.y, circles[i].x, circles[i].y);
-      if(d < this.r + circles[i].r) {
+      if(d - 5 < this.r + circles[i].r) {
         return true;
       }
     }
@@ -97,7 +97,6 @@ function findCoordinate(x, y) {
 }
 
 function preload() {
-  img = loadImage("data/videoFrames/3ezgif-frame-001.jpg")
   generateCounts();
 }
 
@@ -146,14 +145,14 @@ function generateCounts() {
   }
 }
 
-var imageNumber = 60; //SWITCH BACK TO 0
+var imageNumber = 61; //SWITCH BACK TO 0
 
 
 var xCoords = []
 var yCoords = []
 
 function handleImage(img) {
-  background(img);
+  // background(img);
   
   xCoords = [];
   yCoords = [];
@@ -211,6 +210,7 @@ function removeIncorrectCircles() {
     // if(circles[i].touchingOtherCircle()) {
     //   circles.splice(i, 1);
     //   console.log("other circle")
+    //   i--;
     // }
     // if(circles[i].collision()) {
     //   circles.splice(i, 1);
@@ -227,42 +227,73 @@ function removeIncorrectCircles() {
 }
 
 
+var lastCircleSize = 0;
 var zeroTimer = 0;
-function draw() {
-  frameRate(120);
-  // background(0);
 
+function draw() {
+  background(255);
+  gradientGeneration();
+  frameRate(60);
+  
+  //Checking if enough circles have been generated
   var circleArea = 0;
   for (let i=0; i<circles.length; i++) {
     circleArea += PI * pow(circles[i].r, 2);
   }
   var blackArea = xCoords.length
-
   var coveredArea = (circleArea / blackArea)
-  if(coveredArea > .65){ 
-    console.log(circles.length);
-    triggerImage();
+
+  if(circles.length > 350) {
+    circles = [];
+  }
+
+  //Trigger image if enough circles have been generated
+  console.log(coveredArea)
+  if(xCoords.length > 0.75*canvasHeight*canvasWidth) {
+    if(coveredArea > .70) { 
+      triggerImage();
+    }
+  }
+  else if(xCoords.length > 0.5*canvasHeight*canvasWidth) {
+    if(coveredArea > .65) {
+      triggerImage();
+    }
+  }
+  else if(xCoords.length > 0.25*canvasHeight*canvasWidth) {
+    if(coveredArea > .60) {
+      triggerImage();
+    }
+  }
+  else {
+    if(coveredArea > .55) {
+      triggerImage();
+    }
+  }
+
+  //If no circles are being generated, generate again (B&W to W&B transition)
+  if((lastCircleSize == circles.length) && (circles.length == 0)) {
+    zeroTimer++;
+  }
+  if(zeroTimer > 30) {
+    startProject();
     zeroTimer = 0;
   }
 
-  if(coveredArea == 0) {
-    zeroTimer++;
-  }
-
-  // setInterval(triggerImage, 2000);
-
-  gradientGeneration();
-
-  var doneIndex;
+  //Generate a circle, 
   if(!generatingCircle) {
-    doneIndex = drawCircle();
+    drawCircle();
   }
-  else {
-    xCoords.splice(doneIndex, 1)
-    yCoords.splice(doneIndex, 1)
-  }
+  // var doneIndex;
+  // if(!generatingCircle) {
+  //   doneIndex = drawCircle();
+  // }
+  // else {
+  //   xCoords.splice(doneIndex, 1)
+  //   yCoords.splice(doneIndex, 1)
+  // }
   circleLoop();
   
+  lastCircleSize = circles.length;
 }
 
 function gradientGeneration() {
