@@ -16,7 +16,7 @@ class Circle {
   
   show() {
     stroke(255)
-    fill(255);
+    fill(0);
     strokeWeight(3)
     ellipse(this.x, this.y, this.r * 2, this.r * 2);
   } 
@@ -55,10 +55,10 @@ class Circle {
   }
 
   collision() {
-    if(this.x + this.r + 5 > width || this.x - this.r - 5 < 0) {
+    if(this.x + this.r + 3 > width || this.x - this.r - 3 < 0) {
       return true;
     }
-    if(this.y + this.r + 5> height || this.y - this.r - 5< 0) {
+    if(this.y + this.r + 3 > height || this.y - this.r - 3 < 0) {
       return true;
     }
 
@@ -145,8 +145,7 @@ function generateCounts() {
   }
 }
 
-var imageNumber = 61; //SWITCH BACK TO 0
-
+var imageNumber = 0; //SWITCH BACK TO 0
 
 var xCoords = []
 var yCoords = []
@@ -184,6 +183,7 @@ function handleImage(img) {
 }
 
 function triggerImage() {
+
   var frame = frameNumber[imageNumber];
   var setNum = setNumber[imageNumber];
 
@@ -248,24 +248,27 @@ function draw() {
   }
 
   //Trigger image if enough circles have been generated
-  console.log(coveredArea)
   if(xCoords.length > 0.75*canvasHeight*canvasWidth) {
     if(coveredArea > .70) { 
+      saveCanvas('' + imageNumber + '', 'jpg');
       triggerImage();
     }
   }
   else if(xCoords.length > 0.5*canvasHeight*canvasWidth) {
     if(coveredArea > .65) {
+      saveCanvas('' + imageNumber + '', 'jpg');
       triggerImage();
     }
   }
   else if(xCoords.length > 0.25*canvasHeight*canvasWidth) {
     if(coveredArea > .60) {
+      saveCanvas('' + imageNumber + '', 'jpg');
       triggerImage();
     }
   }
   else {
     if(coveredArea > .55) {
+      saveCanvas('' + imageNumber + '', 'jpg');
       triggerImage();
     }
   }
@@ -322,7 +325,6 @@ function gradientGeneration() {
 function circleLoop() {
   for (let i = 0; i < circles.length; i++) {
 
-    //CHANGE THIS IF U WANT ANIMATED
     circles[i].show();
     circles[i].changeSize();
 
