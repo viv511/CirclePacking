@@ -55,10 +55,10 @@ class Circle {
   }
 
   collision() {
-    if(this.x + this.r + 3 > width || this.x - this.r - 3 < 0) {
+    if(this.x + this.r > width || this.x - this.r < 0) {
       return true;
     }
-    if(this.y + this.r + 3 > height || this.y - this.r - 3 < 0) {
+    if(this.y + this.r > height || this.y - this.r < 0) {
       return true;
     }
 
@@ -145,13 +145,13 @@ function generateCounts() {
   }
 }
 
-var imageNumber = 0; //SWITCH BACK TO 0
+var imageNumber = 55; //SWITCH BACK TO 0
 
 var xCoords = []
 var yCoords = []
 
 function handleImage(img) {
-  // background(img);
+  background(img);
   
   xCoords = [];
   yCoords = [];
@@ -231,7 +231,6 @@ var lastCircleSize = 0;
 var zeroTimer = 0;
 
 function draw() {
-  background(255);
   gradientGeneration();
   frameRate(60);
   
@@ -250,25 +249,25 @@ function draw() {
   //Trigger image if enough circles have been generated
   if(xCoords.length > 0.75*canvasHeight*canvasWidth) {
     if(coveredArea > .70) { 
-      saveCanvas('' + imageNumber + '', 'jpg');
+      // saveCanvas('' + imageNumber + '', 'jpg');
       triggerImage();
     }
   }
   else if(xCoords.length > 0.5*canvasHeight*canvasWidth) {
     if(coveredArea > .65) {
-      saveCanvas('' + imageNumber + '', 'jpg');
+      // saveCanvas('' + imageNumber + '', 'jpg');
       triggerImage();
     }
   }
   else if(xCoords.length > 0.25*canvasHeight*canvasWidth) {
     if(coveredArea > .60) {
-      saveCanvas('' + imageNumber + '', 'jpg');
+      // saveCanvas('' + imageNumber + '', 'jpg');
       triggerImage();
     }
   }
   else {
     if(coveredArea > .55) {
-      saveCanvas('' + imageNumber + '', 'jpg');
+      // saveCanvas('' + imageNumber + '', 'jpg');
       triggerImage();
     }
   }
