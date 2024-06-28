@@ -145,14 +145,12 @@ function generateCounts() {
   }
 }
 
-var imageNumber = 55; //SWITCH BACK TO 0
+var imageNumber = 0; //SWITCH BACK TO 0
 
 var xCoords = []
 var yCoords = []
 
-function handleImage(img) {
-  background(img);
-  
+function handleImage(img) {  
   xCoords = [];
   yCoords = [];
 
@@ -182,7 +180,14 @@ function handleImage(img) {
   img.updatePixels();
 }
 
+function saveCurrentFrame() {
+  let fileName = 'frame-' + imageNumber;
+  
+  // saveCanvas(fileName, 'jpg');
+}
+
 function triggerImage() {
+  saveCurrentFrame()
 
   var frame = frameNumber[imageNumber];
   var setNum = setNumber[imageNumber];
@@ -231,6 +236,7 @@ var lastCircleSize = 0;
 var zeroTimer = 0;
 
 function draw() {
+  background(0);
   gradientGeneration();
   frameRate(60);
   
@@ -266,7 +272,7 @@ function draw() {
     }
   }
   else {
-    if(coveredArea > .55) {
+    if(coveredArea > .50) {
       // saveCanvas('' + imageNumber + '', 'jpg');
       triggerImage();
     }
